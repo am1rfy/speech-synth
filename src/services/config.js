@@ -5,7 +5,7 @@ const textToSpeech = {
 
 const speechToText = {
     URL: import.meta.env.VITE_STT_URL,
-    TOKEN: 'Token '.concat(import.meta.env.VITE_TTS_TOKEN)
+    TOKEN: 'Token '.concat(import.meta.env.VITE_STT_TOKEN)
 }
 
 export {
