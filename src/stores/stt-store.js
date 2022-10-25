@@ -17,6 +17,13 @@ export const useSTTStore = defineStore('stt', {
             }
         }
     },
+    getters: {
+        getBlob(state) {
+            return new Blob(state.audio.chunks, {
+                type: this.audio.format
+            })
+        }
+    },
     actions: {
         async convert() {
             const [isSuccess, result] = await stt.convert(this.prepareData())
