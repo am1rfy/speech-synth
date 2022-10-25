@@ -6,26 +6,31 @@ export const useSTTStore = defineStore('stt', {
         return {
             text: {
                 isExist: false,
-                content: ''
+                content: '',
+                clear: function() {
+                    [this.isExist, this.content] = [false, '']
+                }
             },
             audio: {
                 chunks: [],
-                format: 'audio/ogg'
+                format: 'audio/ogg',
+                src: '',
+                clear: function () {
+                    this.chunks = []
+                }
             }
+        }
+    },
+    getters: {
+        getBlob(state) {
+            return new Blob(state.audio.chunks, {
+                type: this.audio.format
+            })
         }
     },
     actions: {
         async convert() {
-            const blob = new Blob(this.audio.chunks, {
-                type: this.audio.format
-            })
-
-            // todo
-            console.log(blob)
-
-            const [isSuccess, result] = await stt.convert({
-                ogg: blob
-            })
+            const [isSuccess, result] = await stt.convert(this.prepareData())
 
             if (isSuccess) {
                 this.text.isExist = true
@@ -33,8 +38,16 @@ export const useSTTStore = defineStore('stt', {
             }
             return isSuccess
         },
-        clearText() {
-            [this.text.isExist, this.text.content] = [false, '']
+        prepareData() {
+            const blob = new Blob(this.audio.chunks, {
+                type: this.audio.format
+            })
+            const audioFile = new File([blob], 'audio.ogg')
+
+            const formData = new FormData()
+            formData.append('ogg', audioFile)
+
+            return formData
         }
     }
 })
