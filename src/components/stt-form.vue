@@ -5,13 +5,6 @@
 
       <div class="btn-container">
         <el-button
-            type="info" plain
-            @click="resetForm"
-        >
-          Reset
-        </el-button>
-
-        <el-button
             v-if="recordingState === 'inactive'"
             type="success" plain
             id="record-btn"
@@ -41,9 +34,9 @@
     </template>
 
     <template v-else>
-      <audio id="audio" ref="audio">
+      <audio controls id="audio" ref="audio">
         <source
-            src=""
+            :src="speechToTextStore.audio.src"
             type="audio/ogg"
         >
       </audio>
@@ -87,22 +80,33 @@ export default {
       slider: {
         value: 0,
         thread: undefined,
-        start: () => {
+        start: function () {
           this.thread = setInterval (() => {
-            this.slider.value += 1
+            this.value += 1
           }, 100)
         },
-        stop: () => {
+        stop: function () {
           clearInterval(this.thread)
           this.thread = undefined
         },
-        reset: () => {
-          // todo
+        reset: function () {
+          this.stop()
+          this.value = 0
         }
       }
     }
   },
   methods: {
+    async initRecording() {
+      const stream = await navigator.mediaDevices.getUserMedia({
+        audio: true
+      })
+      this.mediaRecorder = new MediaRecorder(stream)
+
+      this.mediaRecorder.ondataavailable  =  event => {
+        this.speechToTextStore.audio.chunks.push(event.data)
+      }
+    },
     async startRecording() {
       await this.initRecording()
 
@@ -115,21 +119,6 @@ export default {
       this.slider.stop()
       this.recordingState = 'finished'
     },
-    resetForm() {
-      this.speechToTextStore.audio.chunks = []
-      this.slider.reset()
-      this.mediaRecorder = undefined
-    },
-    async initRecording() {
-      const stream = await navigator.mediaDevices.getUserMedia({
-        audio: true
-      })
-      this.mediaRecorder = new MediaRecorder(stream)
-
-      this.mediaRecorder.ondataavailable  =  event => {
-        this.speechToTextStore.audio.chunks.push(event.data)
-      }
-    },
     async onSubmit() {
       this.speechToTextStore.text.clear()
 
@@ -141,12 +130,13 @@ export default {
       this.recordingState = 'inactive'
     },
     showAudio() {
-      const audio = this.$refs.audio
-      audio.controls = true
-      audio.src = URL.createObjectURL(this.speechToTextStore.getBlob)
+      this.speechToTextStore.audio.src = URL.createObjectURL(this.speechToTextStore.getBlob)
     },
     resetAll() {
-
+      this.mediaRecorder = undefined
+      this.speechToTextStore.text.clear()
+      this.speechToTextStore.audio.clear()
+      this.slider.reset()
     },
     async saveToBuffer() {
       await navigator.clipboard.writeText(this.speechToTextStore.text.content)
