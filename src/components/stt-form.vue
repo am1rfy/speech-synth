@@ -13,14 +13,33 @@
           Record
         </el-button>
 
-        <el-button
-            v-else-if="recordingState === 'active'"
-            type="danger" plain
-            id="stop-btn"
-            @click="stopRecording"
-        >
-          Stop
-        </el-button>
+        <template v-else-if="recordingState === 'active' || recordingState === 'paused'">
+          <el-button
+              v-if="recordingState !== 'paused'"
+              type="info" plain
+              id="pause-btn"
+              @click="pauseRecording"
+          >
+            Pause
+          </el-button>
+          <el-button
+              v-else
+              type="info" plain
+              id="pause-btn"
+              @click="resumeRecording"
+          >
+            Resume
+          </el-button>
+
+          <el-button
+              type="danger" plain
+              id="stop-btn"
+              @click="stopRecording"
+          >
+            Stop
+          </el-button>
+        </template>
+
 
         <el-button
             v-else-if="recordingState === 'finished'"
@@ -89,6 +108,9 @@ export default {
           clearInterval(this.thread)
           this.thread = undefined
         },
+        pause: function () {
+          clearInterval(this.thread)
+        },
         reset: function () {
           this.stop()
           this.value = 0
@@ -103,7 +125,7 @@ export default {
       })
       this.mediaRecorder = new MediaRecorder(stream)
 
-      this.mediaRecorder.ondataavailable  =  event => {
+      this.mediaRecorder.ondataavailable = event => {
         this.speechToTextStore.audio.chunks.push(event.data)
       }
     },
@@ -119,9 +141,17 @@ export default {
       this.slider.stop()
       this.recordingState = 'finished'
     },
+    pauseRecording() {
+      this.mediaRecorder.pause()
+      this.slider.pause()
+      this.recordingState = 'paused'
+    },
+    resumeRecording() {
+      this.mediaRecorder.resume()
+      this.slider.start()
+      this.recordingState = 'active'
+    },
     async onSubmit() {
-      this.speechToTextStore.text.clear()
-
       const result = await this.speechToTextStore.convert()
 
       this.showAudio()
@@ -157,6 +187,7 @@ export default {
   }
   #convert-btn,
   #record-btn,
+  #pause-btn,
   #stop-btn {
     margin-left: 10px;
   }
