@@ -6,7 +6,10 @@ export const useTTSStore = defineStore('tts', {
         return {
             audio: {
                 isExist: false,
-                src: ''
+                src: '',
+                clear: function() {
+                    [this.isExist, this.src] = [false, '']
+                }
             },
             formData: {
                 text: '',
@@ -27,9 +30,6 @@ export const useTTSStore = defineStore('tts', {
                 this.audio.src = import.meta.env.VITE_TTS_URL.concat(result['result_url'])
             }
             return isSuccess
-        },
-        clearAudio() {
-            [this.audio.isExist, this.audio.src] = [false, '']
         }
     }
 })

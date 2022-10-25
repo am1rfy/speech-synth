@@ -43,7 +43,7 @@ export default {
   },
   methods: {
     async onSubmit() {
-      this.textToSpeechStore.clearAudio()
+      this.textToSpeechStore.audio.clear()
       const result = await this.textToSpeechStore.convert()
       this.$emit('resultHasAvailable', result)
     }
