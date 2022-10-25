@@ -13,7 +13,11 @@ export const useSTTStore = defineStore('stt', {
             },
             audio: {
                 chunks: [],
-                format: 'audio/ogg'
+                format: 'audio/ogg',
+                src: '',
+                clear: function () {
+                    this.chunks = []
+                }
             }
         }
     },
