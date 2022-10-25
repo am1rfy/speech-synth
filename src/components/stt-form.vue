@@ -38,12 +38,40 @@
       </el-button>
     </div>
 
-    <el-input
-        v-if="speechToTextStore.text.isExist"
-        v-model="speechToTextStore.text.content"
-        type="textarea"
-        :readonly="true"
-    />
+    <template v-if="speechToTextStore.text.isExist">
+      <audio id="audio" ref="audio">
+        <source
+            src=""
+            type="audio/ogg"
+        >
+      </audio>
+
+      <el-input
+          v-model="speechToTextStore.text.content"
+          type="textarea"
+          :readonly="true"
+      />
+
+      <div class="btn-container">
+        <el-button
+            type="info" plain
+            id="convert-btn"
+            @click="resetAll"
+        >
+          Repeat
+        </el-button>
+
+        <el-button
+            type="success" plain
+            id="convert-btn"
+            @click="saveToBuffer"
+        >
+          Copy
+        </el-button>
+      </div>
+
+    </template>
+
   </div>
 </template>
 
@@ -105,12 +133,26 @@ export default {
       }
     },
     async onSubmit() {
-      this.speechToTextStore.clearText()
+      this.speechToTextStore.text.clear()
+
       const result = await this.speechToTextStore.convert()
+
+      this.showAudio()
       this.$emit('resultHasAvailable', result)
 
       this.recordingState = 'inactive'
     },
+    showAudio() {
+      const audio = this.$refs.audio
+      audio.controls =true
+      audio.src = URL.createObjectURL(this.speechToTextStore.getBlob)
+    },
+    resetAll() {
+
+    },
+    saveToBuffer() {
+
+    }
   }
 }
 </script>
@@ -128,5 +170,9 @@ export default {
   #record-btn,
   #stop-btn {
     margin-left: 10px;
+  }
+  #audio {
+    margin: 30px 0;
+    width: 100%;
   }
 </style>
