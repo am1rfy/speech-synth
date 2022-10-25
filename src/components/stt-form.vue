@@ -1,44 +1,46 @@
 <template>
   <div class="form">
-    <el-slider v-model="slider.value" disabled size="large" />
+    <template v-if="!speechToTextStore.text.isExist">
+      <el-slider v-model="slider.value" disabled size="large" />
 
-    <div class="btn-container">
-      <el-button
-          type="info" plain
-          @click="resetForm"
-      >
-        Reset
-      </el-button>
+      <div class="btn-container">
+        <el-button
+            type="info" plain
+            @click="resetForm"
+        >
+          Reset
+        </el-button>
 
-      <el-button
-          v-if="recordingState === 'inactive'"
-          type="success" plain
-          id="record-btn"
-          @click="startRecording"
-      >
-        Record
-      </el-button>
+        <el-button
+            v-if="recordingState === 'inactive'"
+            type="success" plain
+            id="record-btn"
+            @click="startRecording"
+        >
+          Record
+        </el-button>
 
-      <el-button
-          v-else-if="recordingState === 'active'"
-          type="danger" plain
-          id="stop-btn"
-          @click="stopRecording"
-      >
-        Stop
-      </el-button>
+        <el-button
+            v-else-if="recordingState === 'active'"
+            type="danger" plain
+            id="stop-btn"
+            @click="stopRecording"
+        >
+          Stop
+        </el-button>
 
-      <el-button
-          v-else-if="recordingState === 'finished'"
-          type="success" plain
-          id="convert-btn"
-          @click="onSubmit"
-      >
-        Convert
-      </el-button>
-    </div>
+        <el-button
+            v-else-if="recordingState === 'finished'"
+            type="success" plain
+            id="convert-btn"
+            @click="onSubmit"
+        >
+          Convert
+        </el-button>
+      </div>
+    </template>
 
-    <template v-if="speechToTextStore.text.isExist">
+    <template v-else>
       <audio id="audio" ref="audio">
         <source
             src=""
@@ -55,7 +57,6 @@
       <div class="btn-container">
         <el-button
             type="info" plain
-            id="convert-btn"
             @click="resetAll"
         >
           Repeat
@@ -63,15 +64,12 @@
 
         <el-button
             type="success" plain
-            id="convert-btn"
             @click="saveToBuffer"
         >
           Copy
         </el-button>
       </div>
-
     </template>
-
   </div>
 </template>
 
@@ -144,14 +142,14 @@ export default {
     },
     showAudio() {
       const audio = this.$refs.audio
-      audio.controls =true
+      audio.controls = true
       audio.src = URL.createObjectURL(this.speechToTextStore.getBlob)
     },
     resetAll() {
 
     },
-    saveToBuffer() {
-
+    async saveToBuffer() {
+      await navigator.clipboard.writeText(this.speechToTextStore.text.content)
     }
   }
 }
@@ -165,6 +163,7 @@ export default {
   .btn-container {
     display: flex;
     justify-content: flex-end;
+    margin: 10px 0 0 0;
   }
   #convert-btn,
   #record-btn,
@@ -172,7 +171,7 @@ export default {
     margin-left: 10px;
   }
   #audio {
-    margin: 30px 0;
+    margin:  0 0 30px 0;
     width: 100%;
   }
 </style>
