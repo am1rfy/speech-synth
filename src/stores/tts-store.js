@@ -19,10 +19,11 @@ export const useTTSStore = defineStore('tts', {
     },
     actions: {
         async convert() {
-            const [isSuccess, result] = await tts.convert({
+            const formData = {
                 text: this.formData.text,
                 format: this.formData.format
-            })
+            }
+            const [isSuccess, result] = await tts.convert(formData)
 
             // TODO
             if (isSuccess) {
