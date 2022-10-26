@@ -17,14 +17,14 @@
       <div class="flex-grow" />
       <el-menu-item
           index="text-to-speech"
-          @click="ttsFormIsActive = true"
+          @click="ttsFormIsActive = true; alert.remove()"
       >
         Text to speech
       </el-menu-item>
 
       <el-menu-item
           index="speech-to-text"
-          @click="ttsFormIsActive = false"
+          @click="ttsFormIsActive = false; alert.remove()"
       >
         Speech to text
       </el-menu-item>
