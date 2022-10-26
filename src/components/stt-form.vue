@@ -171,6 +171,7 @@ export default {
     },
     async saveToBuffer() {
       await navigator.clipboard.writeText(this.speechToTextStore.text.content)
+      this.$emit('resultHasAvailable', true, 'Copied!')
     }
   },
   watch: {

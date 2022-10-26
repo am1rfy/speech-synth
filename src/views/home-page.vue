@@ -67,7 +67,7 @@ export default {
 
           this.thread = setTimeout(() => {
             this.isExist = false
-          }, 5000)
+          }, 3000)
         },
         remove: function () {
           clearInterval(this.thread)
