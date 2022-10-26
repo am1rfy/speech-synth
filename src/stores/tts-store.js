@@ -6,30 +6,33 @@ export const useTTSStore = defineStore('tts', {
         return {
             audio: {
                 isExist: false,
-                src: ''
+                src: '',
+                clear: function() {
+                    [this.isExist, this.src] = [false, '']
+                }
             },
             formData: {
                 text: '',
-                format: 'ogg'
+                format: 'ogg',
+                clear: function () {
+                    this.text = ''
+                }
             }
         }
     },
     actions: {
         async convert() {
-            const [isSuccess, result] = await tts.convert({
+            const formData = {
                 text: this.formData.text,
                 format: this.formData.format
-            })
+            }
+            const [isSuccess, result] = await tts.convert(formData)
 
-            // TODO
             if (isSuccess) {
                 this.audio.isExist = true
                 this.audio.src = import.meta.env.VITE_TTS_URL.concat(result['result_url'])
             }
             return isSuccess
-        },
-        clearAudio() {
-            [this.audio.isExist, this.audio.src] = [false, '']
         }
     }
 })
