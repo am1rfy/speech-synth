@@ -1,9 +1,9 @@
 <template>
   <el-alert
       id="alert"
-      v-if="result.isExist"
-      :title="result.title"
-      :type="result.type"
+      v-if="alert.isExist"
+      :title="alert.title"
+      :type="alert.type"
       show-icon
   />
 
@@ -32,12 +32,12 @@
 
     <template v-if="ttsFormIsActive">
       <ttsForm
-          @resultHasAvailable="handleResult"
+          @resultHasAvailable="showResponse"
       />
     </template>
     <template v-else>
       <sttForm
-          @resultHasAvailable="handleResult"
+          @resultHasAvailable="showResponse"
       />
     </template>
   </div>
@@ -55,26 +55,41 @@ export default {
   data() {
     return {
       ttsFormIsActive: true,
-      result: {
+
+      alert: {
         isExist: false,
+        thread: undefined,
         type: '',
         title: '',
+
+        show: function () {
+          this.isExist = true
+
+          this.thread = setTimeout(() => {
+            this.isExist = false
+          }, 5000)
+        },
+        remove: function () {
+          clearInterval(this.thread)
+          this.isExist = false
+        }
       }
     }
   },
   methods: {
-    handleResult(resultIsPositive) {
+    showResponse(resultIsPositive, msg) {
+      if (this.alert.isExist)
+        this.alert.remove()
+
       if (resultIsPositive) {
-        [this.result.type, this.result.title] = ['success', 'Success']
+        this.alert.type = 'success'
+        msg ? this.alert.title = msg : this.alert.title = 'Success'
       }
       else {
-        [this.result.type, this.result.title] = ['error', 'There was some kind of error, try again later']
+        this.alert.type = 'error'
+        msg ? this.alert.title = msg : this.alert.title = 'There was some kind of error, try again later'
       }
-      this.result.isExist = true
-
-      setTimeout(() => {
-        this.result.isExist = false
-      }, 5000)
+      this.alert.show()
     }
   }
 }
