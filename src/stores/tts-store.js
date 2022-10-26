@@ -13,7 +13,10 @@ export const useTTSStore = defineStore('tts', {
             },
             formData: {
                 text: '',
-                format: 'ogg'
+                format: 'ogg',
+                clear: function () {
+                    this.text = ''
+                }
             }
         }
     },
@@ -25,7 +28,6 @@ export const useTTSStore = defineStore('tts', {
             }
             const [isSuccess, result] = await tts.convert(formData)
 
-            // TODO
             if (isSuccess) {
                 this.audio.isExist = true
                 this.audio.src = import.meta.env.VITE_TTS_URL.concat(result['result_url'])

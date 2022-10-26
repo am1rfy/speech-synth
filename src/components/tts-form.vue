@@ -7,28 +7,36 @@
         autosize
     />
 
-    <div class="btn-container">
-      <el-button
-          type="info" plain
-          @click="textToSpeechStore.formData.text = ''"
-      >
-        Reset
-      </el-button>
-      <el-button
-          type="success" plain
-          id="confirm-btn"
-          @click="onSubmit"
-      >
-        Convert
-      </el-button>
-    </div>
+    <template v-if="!textToSpeechStore.audio.isExist">
+      <div class="btn-container">
+        <el-button
+            type="success" plain
+            id="confirm-btn"
+            @click="onSubmit"
+        >
+          Convert
+        </el-button>
+      </div>
+    </template>
 
-    <audio controls v-if="textToSpeechStore.audio.isExist" id="audio">
-      <source
-          :src="textToSpeechStore.audio.src"
-          type="audio/ogg"
-      >
-    </audio>
+    <template v-else>
+      <audio controls  id="audio">
+        <source
+            :src="textToSpeechStore.audio.src"
+            type="audio/ogg"
+        >
+      </audio>
+
+      <div class="btn-container">
+        <el-button
+            type="info" plain
+            @click="resetAll"
+        >
+          Repeat
+        </el-button>
+      </div>
+    </template>
+
   </div>
 </template>
 
@@ -46,6 +54,10 @@ export default {
       this.textToSpeechStore.audio.clear()
       const result = await this.textToSpeechStore.convert()
       this.$emit('resultHasAvailable', result)
+    },
+    resetAll() {
+      this.textToSpeechStore.formData.clear()
+      this.textToSpeechStore.audio.clear()
     }
   },
 }
@@ -61,9 +73,6 @@ export default {
     justify-content: flex-end;
 
     margin-top: 15px;
-  }
-  #confirm-btn {
-    margin-left: 10px;
   }
   #audio {
     margin-top: 30px;
