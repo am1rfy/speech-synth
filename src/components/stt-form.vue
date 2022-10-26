@@ -64,6 +64,7 @@
           v-model="speechToTextStore.text.content"
           type="textarea"
           :readonly="true"
+          autosize
       />
 
       <div class="btn-container">
@@ -102,7 +103,7 @@ export default {
         start: function () {
           this.thread = setInterval (() => {
             this.value += 1
-          }, 100)
+          }, 250)
         },
         stop: function () {
           clearInterval(this.thread)
@@ -170,6 +171,17 @@ export default {
     },
     async saveToBuffer() {
       await navigator.clipboard.writeText(this.speechToTextStore.text.content)
+    }
+  },
+  watch: {
+    slider: {
+      handler() {
+        if (this.slider.value === 100) {
+          this.stopRecording()
+          this.$emit('resultHasAvailable', false, 'Audio duration should be less than 25s')
+        }
+      },
+      deep: true
     }
   }
 }
