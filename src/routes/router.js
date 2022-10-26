@@ -3,7 +3,7 @@ import { createRouter, createWebHistory } from 'vue-router'
 const routes = [
     {
         path: '/',
-        name: 'stt',
+        name: 'Home',
         meta: {
             title: 'Speech To Text'
         },
