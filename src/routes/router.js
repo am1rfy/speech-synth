@@ -3,11 +3,27 @@ import { createRouter, createWebHistory } from 'vue-router'
 const routes = [
     {
         path: '/',
-        name: 'Home',
+        name: 'stt',
         meta: {
-            title: 'Home'
+            title: 'Speech To Text'
         },
-        component: () => import('../views/home-page.vue')
+        component: () => import('../views/stt-page.vue')
+    },
+    {
+        path: '/speech-to-text',
+        name: 'stt',
+        meta: {
+            title: 'Speech To Text'
+        },
+        component: () => import('../views/stt-page.vue')
+    },
+    {
+        path: '/text-to-speech',
+        name: 'tts',
+        meta: {
+            title: 'Text To Speech'
+        },
+        component: () => import('../views/tts-page.vue')
     },
     {
         path: '/:pathMatch(.*)*',
