@@ -10,6 +10,7 @@
     <template v-if="!textToSpeechStore.audio.isExist">
       <div class="btn-container">
         <el-button
+            v-loading.fullscreen.lock="loading"
             type="success" plain
             id="confirm-btn"
             @click="onSubmit"
@@ -46,13 +47,19 @@ import {useTTSStore} from '../stores/tts-store.js'
 export default {
   data() {
     return {
-      textToSpeechStore: useTTSStore()
+      textToSpeechStore: useTTSStore(),
+
+      loading: false
     }
   },
   methods: {
     async onSubmit() {
       this.textToSpeechStore.audio.clear()
+
+      this.loading = true
       const result = await this.textToSpeechStore.convert()
+      this.loading = false
+
       this.$emit('resultHasAvailable', result)
     },
     resetAll() {

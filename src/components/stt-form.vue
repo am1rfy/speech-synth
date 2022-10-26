@@ -42,6 +42,7 @@
 
 
         <el-button
+            v-loading.fullscreen.lock="loading"
             v-else-if="recordingState === 'finished'"
             type="success" plain
             id="convert-btn"
@@ -93,6 +94,8 @@ export default {
   data() {
     return {
       speechToTextStore: useSTTStore(),
+
+      loading: false,
 
       mediaRecorder: undefined,
       recordingState: 'inactive',
@@ -153,7 +156,9 @@ export default {
       this.recordingState = 'active'
     },
     async onSubmit() {
+      this.loading = true
       const result = await this.speechToTextStore.convert()
+      this.loading = false
 
       this.showAudio()
       this.$emit('resultHasAvailable', result)
