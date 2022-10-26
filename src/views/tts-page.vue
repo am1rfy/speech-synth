@@ -17,45 +17,33 @@
       <div class="flex-grow" />
       <el-menu-item
           index="text-to-speech"
-          @click="ttsFormIsActive = true; alert.remove()"
       >
         Text to speech
       </el-menu-item>
 
       <el-menu-item
           index="speech-to-text"
-          @click="ttsFormIsActive = false; alert.remove()"
+          @click="$router.push({name: 'stt'})"
       >
         Speech to text
       </el-menu-item>
     </el-menu>
 
-    <template v-if="ttsFormIsActive">
-      <ttsForm
-          @resultHasAvailable="showResponse"
-      />
-    </template>
-    <template v-else>
-      <sttForm
-          @resultHasAvailable="showResponse"
-      />
-    </template>
+    <ttsForm
+        @resultHasAvailable="showResponse"
+    />
   </div>
 </template>
 
 <script>
 import ttsForm from '../components/tts-form.vue'
-import sttForm from '../components/stt-form.vue'
 
 export default {
   components: {
-    ttsForm,
-    sttForm
+    ttsForm
   },
   data() {
     return {
-      ttsFormIsActive: true,
-
       alert: {
         isExist: false,
         thread: undefined,
@@ -96,24 +84,24 @@ export default {
 </script>
 
 <style scoped>
-  .main-container {
-    width: 600px;
+.main-container {
+  width: 600px;
 
-    display: flex;
-    justify-content: center;
-    flex-direction: column;
+  display: flex;
+  justify-content: center;
+  flex-direction: column;
 
-    margin-top: 15vh;
+  margin-top: 15vh;
 
-    border: solid 1px var(--el-menu-border-color);
-    border-radius: var(--el-border-radius-base);
-  }
-  .flex-grow {
-    flex-grow: 1;
-  }
-  #alert {
-    width: 600px;
-    margin-top: 10vh;
-    position: absolute;
-  }
+  border: solid 1px var(--el-menu-border-color);
+  border-radius: var(--el-border-radius-base);
+}
+.flex-grow {
+  flex-grow: 1;
+}
+#alert {
+  width: 600px;
+  margin-top: 10vh;
+  position: absolute;
+}
 </style>
